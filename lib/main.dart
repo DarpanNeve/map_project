@@ -5,6 +5,7 @@ import 'package:location/location.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
   await FlutterConfig.loadEnvVariables();
   runApp(const MyApp());
 }
