@@ -7,15 +7,14 @@ class Speed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: StreamBuilder(
         stream: Location.instance.onLocationChanged,
         builder: (BuildContext context, AsyncSnapshot<LocationData> snapshot) {
           if (snapshot.hasData) {
-            double speed = snapshot.data!.speed!;
+            int speedInKm = (snapshot.data!.speed! * 3.6).toInt();
             return Directionality(
                 textDirection: TextDirection.ltr,
-                child: Center(child: Text('Speed: $speed')));
+                child: Center(child: Text('Speed: $speedInKm km/h')));
           } else {
             return const Center(child: Text('Speed: 0'));
           }
