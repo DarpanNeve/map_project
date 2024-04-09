@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:map_project/speed%20.dart';
+Widget finalWidget=speedWidget;
 
+Widget limitWidget=const Center(
+  child: AlertDialog(
+    backgroundColor: Colors.redAccent,
+    title: Text("Warning"),
+    content: Text("You are over speeding"),
+  ),
+);
 Widget speedWidget = StreamBuilder(
   stream: location.onLocationChanged,
   builder: (BuildContext context,
       AsyncSnapshot<LocationData> snapshot) {
-
     if (snapshot.hasData) {
       int speedInKm = (snapshot.data!.speed! * 3.6).toInt();
       return Directionality(

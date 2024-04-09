@@ -43,6 +43,7 @@ dependencies:
   google_sign_in: ^6.2.1
   dio: ^5.4.2+1
   permission_handler: ^11.3.1
+  flutter_ringtone_player: ^4.0.0+2
 
 dev_dependencies:
   flutter_test:
