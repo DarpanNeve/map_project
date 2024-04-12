@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:location/location.dart';
 import 'package:map_project/speed%20.dart';
-Widget finalWidget=speedWidget;
+import 'package:map_project/speedWarning.dart';
 
-Widget limitWidget=const Center(
+Widget finalWidget = speedWidget;
+double speedLimit = 0;
+Widget limitWidget = const Center(
   child: AlertDialog(
     backgroundColor: Colors.redAccent,
     title: Text("Warning"),
@@ -12,10 +15,22 @@ Widget limitWidget=const Center(
 );
 Widget speedWidget = StreamBuilder(
   stream: location.onLocationChanged,
-  builder: (BuildContext context,
-      AsyncSnapshot<LocationData> snapshot) {
+  builder: (BuildContext context, AsyncSnapshot<LocationData> snapshot) {
+    int speedInKm = (snapshot.data!.speed! * 3.6).toInt();
+    if (speedInKm > speedLimit-5 &&
+        speedInKm < speedLimit &&
+        speedInKm != 0) {
+      FlutterRingtonePlayer().play(
+        fromAsset: "assets/ringtone/exceeded.mpeg",
+        volume: 1,
+      );
+    } else if (speedInKm > speedLimit && speedInKm != 0) {
+      FlutterRingtonePlayer().play(
+        fromAsset: "assets/ringtone/approaching.mpeg",
+        volume: 1,
+      );
+    }
     if (snapshot.hasData) {
-      int speedInKm = (snapshot.data!.speed! * 3.6).toInt();
       return Directionality(
         textDirection: TextDirection.ltr,
         child: SafeArea(
@@ -24,17 +39,110 @@ Widget speedWidget = StreamBuilder(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('Speed: $speedInKm km/h'),
-                Text(
-                    "Acceleration:${snapshot.data!.speedAccuracy!
-                        .toInt()} m/s²"),
+                Container(
+                  height: 200,
+                  width: 400,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    shape: BoxShape.rectangle,
+                    color: Colors.grey.withOpacity(0.2),
+                  ),
+                  child: Center(
+                    child: ListTile(
+                      title: const Text(
+                        'Speed',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                      subtitle: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '$speedInKm',
+                            style: const TextStyle(
+                              fontSize: 80,
+                              color: Colors.blue,
+                            ),
+                          ),
+                          const Text(
+                            ' km/h',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  height: 200,
+                  width: 400,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    shape: BoxShape.rectangle,
+                    color: Colors.grey.withOpacity(0.2),
+                  ),
+                  child: Center(
+                    child: ListTile(
+                      title: const Text(
+                        'Speed Limit',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                      subtitle: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '$speedLimit',
+                            style: const TextStyle(
+                              fontSize: 80,
+                              color: Colors.red,
+                            ),
+                          ),
+                          const Text(
+                            ' km/h',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  height: 150,
+                  width: 400,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    shape: BoxShape.rectangle,
+                    color: Colors.grey.withOpacity(0.2),
+                  ),
+                  child: speedWarning(speedInKm),
+                ),
               ],
             ),
           ),
         ),
       );
     } else {
-      return const Center(child: Text('Speed: 0'));
+      return const Center(
+        child: Text('Speed: 0'),
+      );
     }
   },
 );

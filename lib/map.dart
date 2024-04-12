@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+
 LatLng _center = const LatLng(0, 0);
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -16,29 +18,6 @@ class _MyAppState extends State<MyApp> {
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
-  }
-
-  getLocation() async {
-    locationData = await location.getLocation();
-    double speed = locationData.speed!;
-    debugPrint('Speed: $speed');
-    setState(
-          () {
-        _center = LatLng(locationData.latitude!, locationData.longitude!);
-      },
-    );
-  }
-@override
-  void reassemble() {
-    // TODO: implement reassemble
-    super.reassemble();
-    getLocation();
-  }
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getLocation();
   }
 
   @override
@@ -60,16 +39,13 @@ class _MyAppState extends State<MyApp> {
                 target: _center,
                 zoom: 15.0,
               ),
-              markers: {
-                Marker(
-                  markerId:const MarkerId('1'),
-                  position: _center,
-                  infoWindow: const InfoWindow(title: 'You are here'),
-                ),
-              },
+              myLocationButtonEnabled: true,
+              myLocationEnabled: true,
             );
           } else {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
         },
       ),
